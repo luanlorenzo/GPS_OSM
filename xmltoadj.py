@@ -3,7 +3,6 @@ import math
 from Tkinter import *
 from gistfile1 import *
  
-
 #--------------------------------------------------------------------
 # GLOBAL VARIABLES
 window_width = 1366
@@ -41,7 +40,7 @@ def drawMapGraph(G):
     mainloop()
 
 def drawWay(w, G):      # G -> DiGRaph e w -> Canvas
-    # http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/create_line.html
+    # COMO CRIAR LINHA: http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/create_line.html
     for n_node in G.nodes():
         adj = G.__getitem__(n_node)
         for n_adj in adj:
@@ -54,7 +53,7 @@ def drawNode(w, lat_node, lon_node):
     w.create_rectangle(lon_node, lat_node, lon_node + 1, lat_node + 1, fill="#000000")
 
 def adjustCanvasScale(lat, lon):
-    # PENSAR EM ALGUM METODO PARA PEGAR ESSES DADOS
+    # PENSAR EM ALGUM METODO PARA PEGAR ESSES DADOS AUTOMATICAMENTE
     MAX_LAT = -28.9338700
     MIN_LAT = -28.9425700
     MAX_LON = -49.4748500
