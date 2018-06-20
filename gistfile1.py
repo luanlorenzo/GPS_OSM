@@ -58,41 +58,12 @@ def read_osm(filename_or_stream, only_roads=True):
         if 'oneway' not in w.tags and 'junction' in w.tags and w.tags[u'junction'] != 'roundabout':
             G.add_path(reversed(w.nds), id=w.id, data=w)
 
-    f = open('nodesMAP.nodes', 'w') 
-    master = Tk()
-
-    w = Canvas(master, width=1366, height=700)
-    w.pack()
-
     for n_id in G.nodes():
         n = osm.nodes[n_id]
         G.nodes[n_id].update(dict(data=n)) 
 
-        drawNodes(w, n.lat, n.lon)
-
-        string_file = str(n.id) + " " + str(n.lat) + " " + str(n.lon) + "\n"
-        f.write(string_file)  
-    mainloop()
     return G
         
-def drawNodes(w, lat_node, lon_node):
-    (lat_node, lon_node) = adjustCanvasScale(lat_node, lon_node)
-    w.create_rectangle(lon_node, lat_node, lon_node + 1, lat_node + 1, fill="#000000")
-
-def adjustCanvasScale(lat, lon):
-    MAX_LAT = -28.9338700
-    MIN_LAT = -28.9425700
-    MAX_LON = -49.4748500
-    MIN_LON = -49.4909900
-
-    lat_canvas = lat - MIN_LAT
-    lat_canvas = (- 690 / (MAX_LAT-MIN_LAT)) * lat_canvas + 690
-
-    lon_canvas = lon - MIN_LON
-    lon_canvas = (1366 / (MAX_LON-MIN_LON)) * lon_canvas
-
-    return (lat_canvas, lon_canvas)
-
 class Node:
     def __init__(self, id, lon, lat):
         self.id = id
@@ -135,7 +106,8 @@ class Way:
             
         return ret
         
-        
+""" def getOsmFrame(filename_or_stream): """
+
 
 class OSM:
     def __init__(self, filename_or_stream):
