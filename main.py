@@ -10,18 +10,25 @@ window_height = 700
 #--------------------------------------------------------------------
 def main():
     f1 = file('map.osm', 'r');
-    f2 = file('mapAdj.adjlist', 'w');
     G = read_osm(f1)
-    networkx.write_adjlist(G, f2)
-
     drawMapGraph(G)
     
     f1.close()
-    f2.close()
 #--------------------------------------------------------------------
+def writeNodesOnFile(G):
+    file_nodes = open('map.nodes', 'w')
+    for n_id in G.nodes():
+        string_file = str(G.nodes[n_id]['data'].id) + " " + str(G.nodes[n_id]['data'].lat) + " " + str(G.nodes[n_id]['data'].lon) + "\n"
+        file_nodes.write(string_file)
+    file_nodes.close()
 
+def writeAdjListOnFile(G):
+    file_adjList = file('map.adjlist', 'w');
+    networkx.write_adjlist(G, file_adjList)
+    file_adjList.close()
+
+#--------------------------------------------------------------------
 def drawMapGraph(G):
-    f = open('nodesMAP.nodes', 'w') 
     master = Tk()
 
     canvas_width = window_width
@@ -33,27 +40,30 @@ def drawMapGraph(G):
 
     for n_id in G.nodes():
         drawNode(w, G.nodes[n_id]['data'].lat, G.nodes[n_id]['data'].lon)
-
-    drawWay(w, G)
-    string_file = str(G.nodes[n_id]['data'].id) + " " + str(G.nodes[n_id]['data'].lat) + " " + str(G.nodes[n_id]['data'].lon) + "\n"
-    f.write(string_file)  
+        drawWay(w, G) 
     mainloop()
 
 def drawWay(w, G):      # G -> DiGRaph e w -> Canvas
-    # COMO CRIAR LINHA: http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/create_line.html
     for n_node in G.nodes():
         adj = G.__getitem__(n_node)
         for n_adj in adj:
-            (x1,y1) = adjustCanvasScale(G.nodes[n_node]['data'].lat, G.nodes[n_node]['data'].lon)
-            (x2,y2) = adjustCanvasScale(G.nodes[n_adj]['data'].lat, G.nodes[n_adj]['data'].lon)
-            w.create_line(x1, y1, x2, y2, fill='red')
+            (lat1, lon1) = adjustCanvasScale(G.nodes[n_node]['data'].lat, G.nodes[n_node]['data'].lon)
+            (lat2, lon2) = adjustCanvasScale(G.nodes[n_adj]['data'].lat, G.nodes[n_adj]['data'].lon)
+            if lon1 < lon2 and lat1 < lat2:
+                w.create_line(lon1+1, lat1+1, lon2, lat2, fill='red')
+            elif lon1 < lon2 and lat1 > lat2:
+                w.create_line(lon1+1, lat1, lon2, lat2+1, fill='red')
+            elif lon1 > lon2 and lat1 < lat2:
+                w.create_line(lon1, lat1+1, lon2+1, lat2, fill='red')
+            elif lon1 > lon2 and lat1 > lat2:
+                w.create_line(lon1, lat1, lon2+1, lat2+1, fill='red')
 
 def drawNode(w, lat_node, lon_node):
     (lat_node, lon_node) = adjustCanvasScale(lat_node, lon_node)
     w.create_rectangle(lon_node, lat_node, lon_node + 1, lat_node + 1, fill="#000000")
 
 def adjustCanvasScale(lat, lon):
-    # PENSAR EM ALGUM METODO PARA PEGAR ESSES DADOS AUTOMATICAMENTE
+    # FALTA IMPLEMENTAR - PEGAR ESSES DADOS DO ARQUIVO OSM
     MAX_LAT = -28.9338700
     MIN_LAT = -28.9425700
     MAX_LON = -49.4748500
@@ -84,13 +94,14 @@ def nodesDistances(lat1, lon1, lat2, lon2):
     return R * c
 
 def dijkstra(G, ini):    # ini -> no inicial
+    # FALTA IMPLEMENTAR
     dist = []
     visited = []
     for i in G.nodes():
         dist[i] = -1
         visited[i] = False
     dist[ini] = 0
-
+    pass
 # --------------------------------------------------
 
 if __name__ == "__main__":
